@@ -28,5 +28,13 @@ service AirlineService {
           else 'Critical Delay'
         end as DelayCategory : String(30)
   };
-
+  entity ReportingAirlinePerformance as select from db.ReportingFlights {
+    Reporting_Airline,
+    count(*) as TotalFlights : Integer,
+    avg(ArrDelay) as AvgArrivalDelay : Decimal(9,2),
+    avg(DepDelay) as AvgDepartureDelay : Decimal(9,2),
+    sum(case when Cancelled = true then 1 else 0 end) as CancelledFlights : Integer,
+    sum(case when ArrDelay <= 15 then 1 else 0 end) as OnTimeFlights : Integer
+  }
+  group by Reporting_Airline;
 }
